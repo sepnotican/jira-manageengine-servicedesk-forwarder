@@ -3,12 +3,20 @@
 
 # Log file
 *.log
+log
+.idea
+*.iml
+settings.json
+
 
 # BlueJ files
 *.ctxt
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+
+src/main/java/local
+*.properties
 
 # Package Files #
 *.jar
