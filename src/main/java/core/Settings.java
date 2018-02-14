@@ -28,8 +28,6 @@ public class Settings {
     private String jiraResolutionField = null;
     private String jiraServiceDeskIDField = null;
 
-
-    private int checkerTimeoutSec = -1;
     private int servicedeskTransportTimeoutSec = -1;
 
     private boolean moduleIssueTransortActive = false;
@@ -61,7 +59,6 @@ public class Settings {
     public void createSettings() {
 
         getSettings();
-        settings.setCheckerTimeoutSec(300);
         settings.setServiceDeskTechnichianKey("aaaa-sss-ddd-ffffff");
         settings.setServiceDeskHttpURL("http://servicedesk.example.com");
         settings.setJiraHttpsURL("https://jira.example.com/rest/api/2");
@@ -150,21 +147,6 @@ public class Settings {
 
     public void setServicedeskForwardViewName(String servicedeskForwardViewName) {
         this.servicedeskForwardViewName = servicedeskForwardViewName;
-    }
-
-
-    public int getCheckerTimeoutSec() {
-        if (getSettings().checkerTimeoutSec == -1)
-            load();
-        if (getSettings().checkerTimeoutSec == 0) {
-            logger.warn("checkerTimeoutSec is not set!");
-            System.exit(1);
-        }
-        return getSettings().checkerTimeoutSec;
-    }
-
-    public void setCheckerTimeoutSec(int timeoutSec) {
-        getSettings().checkerTimeoutSec = timeoutSec;
     }
 
     public String getServiceDeskTechnichianKey() {

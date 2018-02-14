@@ -92,7 +92,7 @@ public class JiraHandler {
     }
 
     public boolean createIssueInJira(TaskModel taskModel) {
-        return createIssueInJira(taskModel);
+        return createIssueInJira(taskModel, false);
     }
 
     public boolean createIssueInJira(TaskModel taskModel, boolean onlyBuildQuery) {

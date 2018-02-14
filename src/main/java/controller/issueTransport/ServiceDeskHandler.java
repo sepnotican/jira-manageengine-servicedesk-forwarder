@@ -67,9 +67,10 @@ public class ServiceDeskHandler {
                     if (record.getNodeType() == Node.TEXT_NODE) continue;
 
                     NamedNodeMap attribs = record.getAttributes();
-                    if (attribs.getLength() == 0) continue;
-                    Node attr_URI = attribs.getNamedItem("URI");
-                    if (attr_URI == null) continue;
+                    if (attribs.getLength() > 0) {
+                        Node attr_URI = attribs.getNamedItem("URI");
+                        if (attr_URI == null) continue;
+                    }
                     //else -- create object
                     TaskModel task = new TaskModel();
                     //task.setDate(new Date(0L));

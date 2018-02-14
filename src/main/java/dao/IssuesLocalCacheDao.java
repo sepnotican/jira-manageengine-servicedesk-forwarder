@@ -1,7 +1,9 @@
 package dao;
 
+import core.Settings;
 import entity.TaskModel;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -13,6 +15,13 @@ public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
     private static IssuesLocalCacheDao self = null;
 
     private IssuesLocalCacheDao() {
+
+        String[] sqliteUrlSplitted = Settings.getSettings().getDatabaseURL().split(":");
+
+        File fileDB = new File(sqliteUrlSplitted[2]);
+        if (!fileDB.exists())
+            createTaskTransferStructure();
+
     }
 
     public static IssuesLocalCacheDao getSelf() {
