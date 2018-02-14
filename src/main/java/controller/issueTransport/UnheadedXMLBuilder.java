@@ -1,5 +1,7 @@
 package controller.issueTransport;
 
+import com.google.inject.Singleton;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import java.util.Map;
  * <p>
  * Class for build 'headless' XML for ServiceDesk
  */
+@Singleton
 public class UnheadedXMLBuilder {
 
     public String makeTag(String tag, String value) {

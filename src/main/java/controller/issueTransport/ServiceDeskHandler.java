@@ -1,10 +1,10 @@
 package controller.issueTransport;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import core.Settings;
 import core.Tools;
 import entity.TaskModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,10 +18,10 @@ import java.util.Map;
 /**
  * Created by muzafar on 2/28/17.
  */
-@Component
+@Singleton
 public class ServiceDeskHandler {
 
-    @Autowired
+    @Inject
     private RestXMLCallerImpl restXMLCallerImpl;
 
     public ArrayList<TaskModel> get_requests(int from, int limit) {

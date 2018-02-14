@@ -1,5 +1,6 @@
 package dao;
 
+import com.google.inject.Singleton;
 import core.Settings;
 import entity.TaskModel;
 
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by muzafar on 6/14/17.
  */
+@Singleton
 public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
 
     private static IssuesLocalCacheDao self = null;

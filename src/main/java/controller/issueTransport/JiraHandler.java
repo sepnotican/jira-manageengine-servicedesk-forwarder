@@ -4,24 +4,24 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import core.Settings;
 import core.Tools;
 import entity.TaskModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import sun.misc.BASE64Encoder;
 
 /**
  * Created by muzafar on 3/10/17.
  */
-@Component
+@Singleton
 public class JiraHandler {
 
     private static final String JIRA_ISSUE_TYPE_STORY = "Story";
     final private String CUSTOM_FIELD_RESOLUTION = Settings.getSettings().getJiraResolutionField();
     final private String basicAuth;
 
-    @Autowired
+    @Inject
     private RestJsonCaller restJsonCaller;
 
     public JiraHandler() {

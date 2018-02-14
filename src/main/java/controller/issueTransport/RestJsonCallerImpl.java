@@ -3,6 +3,7 @@ package controller.issueTransport;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.inject.Singleton;
 import core.Tools;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -17,7 +18,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -32,7 +32,7 @@ import java.io.InputStream;
 /**
  * Created by Zafar on 07.02.2017.
  */
-@Component
+@Singleton
 public class RestJsonCallerImpl implements RestJsonCaller {
 
     private Logger logger = Tools.logger;

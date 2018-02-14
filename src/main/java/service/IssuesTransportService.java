@@ -1,26 +1,25 @@
 package service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import controller.issueTransport.JiraHandler;
 import controller.issueTransport.ServiceDeskHandler;
 import core.Settings;
 import core.Tools;
 import dao.IssuesLocalCache;
 import entity.TaskModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by sepnotican on 14.06.17.
  */
-@Component
+@Singleton
 public class IssuesTransportService {
 
-    @Autowired
+    @Inject
     private JiraHandler jiraHandler;
-
-    @Autowired
+    @Inject
     private ServiceDeskHandler serviceDeskHandler;
 
     public void checkForChanges() {

@@ -1,7 +1,7 @@
 package core;
 
+import core.threads.IssueTransportThread;
 import dao.IssuesLocalCache;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Created by muzafar on 5/30/17.
@@ -36,19 +36,18 @@ public class MainClass {
                 }
                 case "--run": {
 
-                    Settings.getSettings().load();
+                    try {
+                        Settings.getSettings().load();
 
-                    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-                    context.register(AppConfig.class);
-                    context.refresh();
+                        Runnable issueTransportThread = new IssueTransportThread();
 
-                    Runnable issueTransportThread = (Runnable) context.getBean("issueTransportThread");
-
-                    if (Settings.getSettings().isModuleIssueTransortActive()) {
-
-                        new Thread(issueTransportThread).start();
-                    } else {
-                        Tools.logger.warn("issue Transport Thread is not active in settings.json");
+                        if (Settings.getSettings().isModuleIssueTransortActive()) {
+                            new Thread(issueTransportThread).start();
+                        } else {
+                            Tools.logger.warn("issue Transport Thread is not active in settings.json");
+                        }
+                    } catch (Exception e) {
+                        Tools.logger.fatal(e.getMessage());
                     }
 
                 }
