@@ -12,11 +12,11 @@ import java.util.List;
  * Created by muzafar on 6/14/17.
  */
 @Singleton
-public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
+public class IssuesLocalCacheDAOImpl extends SQLiteDao implements IssuesLocalCacheDAO {
 
-    private static IssuesLocalCacheDao self = null;
+    private static IssuesLocalCacheDAOImpl self = null;
 
-    private IssuesLocalCacheDao() {
+    private IssuesLocalCacheDAOImpl() {
 
         String[] sqliteUrlSplitted = Settings.getInstance().getDatabaseURL().split(":");
 
@@ -26,9 +26,9 @@ public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
 
     }
 
-    public static IssuesLocalCacheDao getSelf() {
+    public static IssuesLocalCacheDAOImpl getSelf() {
         if (self == null)
-            self = new IssuesLocalCacheDao();
+            self = new IssuesLocalCacheDAOImpl();
         return self;
     }
 
@@ -55,7 +55,7 @@ public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
     @Override
     public void fillTasksCachedInfo(List<TaskModel> taskModelList) {
 
-        final StringBuilder sql = new StringBuilder("SELECT sd_id, jira_key, resolution" +
+        final StringBuilder sql = new StringBuilder("SELECT sd_id, jira_key" +
                 " FROM taskJiraCreated" +
                 " WHERE sd_id IN (");
 
@@ -77,7 +77,6 @@ public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
                     { //fill already added issues
                         if (taskModelList.get(i).getId_sd() == rs.getInt("sd_id")) {
                             taskModelList.get(i).setJiraKey(rs.getString("jira_key"));
-                            taskModelList.get(i).setResolution(rs.getString("resolution"));
                             break;
                         }
                     }

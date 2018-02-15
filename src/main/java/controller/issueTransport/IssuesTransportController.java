@@ -3,7 +3,7 @@ package controller.issueTransport;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import core.Settings;
-import dao.IssuesLocalCache;
+import dao.IssuesLocalCacheDAO;
 import entity.TaskModel;
 import org.apache.log4j.Logger;
 import service.IssueNotFoundException;
@@ -37,7 +37,7 @@ public class IssuesTransportController {
         List<TaskModel> tasksFromSD = serviceDeskHandler.get_requests(0, 1000);
 
         //2 load cached fields from local DB
-        IssuesLocalCache.instance.fillTasksCachedInfo(tasksFromSD);
+        IssuesLocalCacheDAO.instance.fillTasksCachedInfo(tasksFromSD);
 
         for (TaskModel taskSD : tasksFromSD) {
 
@@ -100,7 +100,7 @@ public class IssuesTransportController {
     }
 
     private void updateIssueInLocalCache(TaskModel taskModel) {
-        IssuesLocalCache.instance.updateTaskByJiraKey(taskModel);
+        IssuesLocalCacheDAO.instance.updateTaskByJiraKey(taskModel);
     }
 
 }

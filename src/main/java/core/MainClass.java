@@ -3,7 +3,7 @@ package core;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import core.threads.IssueTransportThread;
-import dao.IssuesLocalCache;
+import dao.IssuesLocalCacheDAO;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -34,11 +34,11 @@ public class MainClass {
                     System.exit(0);
                 }
                 case "--createDB": {
-                    IssuesLocalCache.instance.createTaskTransferStructure();
+                    IssuesLocalCacheDAO.instance.createTaskTransferStructure();
                     System.exit(0);
                 }
                 case "--clearTaskCache": {
-                    IssuesLocalCache.instance.clearTaskCache();
+                    IssuesLocalCacheDAO.instance.clearTaskCache();
                     System.exit(0);
                 }
                 case "--run": {

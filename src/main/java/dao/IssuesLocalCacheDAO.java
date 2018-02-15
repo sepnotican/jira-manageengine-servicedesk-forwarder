@@ -7,9 +7,9 @@ import java.util.List;
 /**
  * Created by muzafar on 6/14/17.
  */
-public interface IssuesLocalCache {
+public interface IssuesLocalCacheDAO {
 
-    IssuesLocalCache instance = IssuesLocalCacheDao.getSelf();
+    IssuesLocalCacheDAO instance = IssuesLocalCacheDAOImpl.getSelf();
 
     void createTaskTransferStructure();
 
