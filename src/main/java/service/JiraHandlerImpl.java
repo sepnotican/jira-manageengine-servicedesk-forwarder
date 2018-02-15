@@ -43,8 +43,7 @@ public class JiraHandlerImpl implements JiraHandler {
     }
 
     @Override
-    public TaskModel getIssueByID(int sd_id, QueryMode queryMode) {
-        TaskModel result_ = null;
+    public TaskModel getIssueByID(int sd_id, QueryMode queryMode) throws IssueNotFoundException {
 
         JsonObject requestBody = new JsonObject();
 
@@ -104,12 +103,11 @@ public class JiraHandlerImpl implements JiraHandler {
                     }
 
 
-                    result_ = taskModel;
+                    return taskModel;
                 }
-            }
-        }
-
-        return result_;
+                throw new IssueNotFoundException("restJsonCaller.callRest() method failed! issue key is null.");
+            } else return null;
+        } else throw new IssueNotFoundException("restJsonCaller.callRest() method failed! response is null.");
     }
 
     @Override

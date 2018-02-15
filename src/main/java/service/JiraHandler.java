@@ -4,7 +4,7 @@ import entity.TaskModel;
 
 public interface JiraHandler {
 
-    TaskModel getIssueByID(int sd_id, QueryMode queryMode);
+    TaskModel getIssueByID(int sd_id, QueryMode queryMode) throws IssueNotFoundException;
 
     boolean createIssueInJira(TaskModel taskModel);
 

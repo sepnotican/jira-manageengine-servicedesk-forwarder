@@ -6,6 +6,7 @@ import core.Settings;
 import dao.IssuesLocalCache;
 import entity.TaskModel;
 import org.apache.log4j.Logger;
+import service.IssueNotFoundException;
 import service.JiraHandler;
 import service.ServiceDeskHandler;
 
@@ -40,11 +41,19 @@ public class IssuesTransportController {
 
         for (TaskModel taskSD : tasksFromSD) {
 
-            TaskModel jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_SD_ID_CUSTOMFIELD);
+            TaskModel jiraResult = null;
 
-            if (jiraResult == null
-                    && settings.isCheckIssuesInJiraByTextstampBeforeCreate())
-                jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_TEXTSTAMP);
+            try {
+                jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_SD_ID_CUSTOMFIELD);
+
+                if (jiraResult == null
+                        && settings.isCheckIssuesInJiraByTextstampBeforeCreate())
+                    jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_TEXTSTAMP);
+            } catch (IssueNotFoundException e) {
+                logger.error(e.getMessage());
+                continue;
+            }
+
 
             //3 not cached - need to create
             if (taskSD.getJiraKey() == null) {

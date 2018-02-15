@@ -17,6 +17,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import service.IssueNotFoundException;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -63,7 +64,8 @@ public class RestJsonCallerImpl implements RestJsonCaller {
     }
 
     @Override
-    public JsonObject callRest(String url, String basicAuth, JsonObject jo, String method, int successCode) {
+    public JsonObject callRest(String url, String basicAuth, JsonObject jo, String method, int successCode)
+            throws IssueNotFoundException {
 
         JsonObject result = null;
 
@@ -114,8 +116,10 @@ public class RestJsonCallerImpl implements RestJsonCaller {
                     result = element.getAsJsonObject();
             }
             EntityUtils.consume(entity);
-        } catch (Exception e) {
+
+        } catch (IOException e) {
             logger.error(e.getMessage());
+            throw new IssueNotFoundException(e.getMessage());
         } finally {
             if (response != null)
                 try {
