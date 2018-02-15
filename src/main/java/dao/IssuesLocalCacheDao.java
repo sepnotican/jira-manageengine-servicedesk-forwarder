@@ -106,7 +106,9 @@ public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
             int result = s.executeUpdate(sql);
 
             if (result > 0)
-                logger.info("JIRA key updated. Issue key: " + taskModel.getJiraKey() + ", sd id: " + taskModel.getId_sd());
+                logger.info("Local cache has been updated. Issue key: " + taskModel.getJiraKey()
+                        + ", sd id: " + taskModel.getId_sd()
+                        + ", resolution: " + taskModel.getResolution());
 
         } catch (SQLException e) {
             showSQLException(e);
