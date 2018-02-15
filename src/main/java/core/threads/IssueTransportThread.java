@@ -25,8 +25,8 @@ public class IssueTransportThread implements Runnable {
         int timeout;
         while (true) {
             try {
-                Settings.getSettings().load();
-                timeout = Math.max(Settings.getSettings().getServicedeskTransportTimeoutSec() * 1000, 30000);
+                Settings.getInstance().load();
+                timeout = Math.max(Settings.getInstance().getServicedeskTransportTimeoutSec() * 1000, 30000);
                 Thread.sleep(timeout);
                 issuesTransportController.checkForChanges();
             } catch (Exception e) {

@@ -20,7 +20,7 @@ import java.util.Base64;
 public class JiraHandlerImpl implements JiraHandler {
 
     private static final Logger logger = Logger.getLogger(JiraHandlerImpl.class);
-    private static final Settings settings = Settings.getSettings();
+    private static final Settings settings = Settings.getInstance();
     private static final String JIRA_CUSTOMFIELD_JSON_PREFIX = "customfield_";
     private static final String JIRA_CUSTOMFIELD_JQL_TEMPLATE = "cf[%s]"; //%s - custom field id
 
@@ -39,7 +39,7 @@ public class JiraHandlerImpl implements JiraHandler {
 
     public JiraHandlerImpl() {
         Base64.Encoder encoder = Base64.getEncoder();
-        basicAuth = encoder.encodeToString(Settings.getSettings().getJiraBasicAuth().getBytes());
+        basicAuth = encoder.encodeToString(Settings.getInstance().getJiraBasicAuth().getBytes());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class JiraHandlerImpl implements JiraHandler {
 
         String jql;
         if (queryMode == QueryMode.BY_TEXTSTAMP) {
-            final String sdStamp = String.format(Settings.getSettings().getServicedeskStamp(), Integer.toString(sd_id));
+            final String sdStamp = String.format(Settings.getInstance().getServicedeskStamp(), Integer.toString(sd_id));
             jql = String.format(JQL_QUERY_TEMPLATE_GET_ISSUE_BY_TEXTSTAMP, sdStamp);
         } else {
             jql = String.format(JQL_QUERY_TEMPLATE_GET_ISSUE_BY_CUSTOMFIELD, sd_id);
@@ -63,13 +63,13 @@ public class JiraHandlerImpl implements JiraHandler {
         JsonArray fieldsArray = new JsonArray();
         fieldsArray.add("id");
         fieldsArray.add("key");
-        fieldsArray.add(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getSettings().getJiraResolutionField());
+        fieldsArray.add(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getInstance().getJiraResolutionField());
         fieldsArray.add("status");
         fieldsArray.add("assignee");
 
         requestBody.add("fields", fieldsArray);
 
-        JsonObject jo = restJsonCaller.callRest(Settings.getSettings().getJiraHttpsURL()
+        JsonObject jo = restJsonCaller.callRest(Settings.getInstance().getJiraHttpsURL()
                 + "/search", basicAuth, requestBody, "POST", 200);
 
         if (jo != null) {
@@ -97,7 +97,7 @@ public class JiraHandlerImpl implements JiraHandler {
                     int statusCode = fieldsObject.getAsJsonObject("status").get("id").getAsInt();
                     taskModel.setJiraStatus(statusCode);
 
-                    JsonElement jeResolution = fieldsObject.get(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getSettings().getJiraResolutionField());
+                    JsonElement jeResolution = fieldsObject.get(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getInstance().getJiraResolutionField());
                     if (jeResolution != null && !jeResolution.isJsonNull()) {
                         String resolution = jeResolution.getAsString();
                         taskModel.setResolution(resolution);
@@ -136,9 +136,9 @@ public class JiraHandlerImpl implements JiraHandler {
         joFields.addProperty("summary", summary);
 
         String descriprion = taskModel.getDescription() + "\n\nRequester: " + taskModel.getRequester() + '\n' +
-                String.format(Settings.getSettings().getServicedeskStamp(), taskModel.getId_sd()) +
+                String.format(Settings.getInstance().getServicedeskStamp(), taskModel.getId_sd()) +
                 "\nlink: " +
-                Settings.getSettings().getServiceDeskHttpURL() +
+                Settings.getInstance().getServiceDeskHttpURL() +
                 "/WorkOrder.do?woMode=viewWO&woID=" + taskModel.getId_sd() +
                 '\n';
 
@@ -149,7 +149,7 @@ public class JiraHandlerImpl implements JiraHandler {
         joFields.add("issuetype", joIssuetype);
 
         JsonElement jpSdId = new JsonPrimitive(String.valueOf(taskModel.getId_sd()));
-        joFields.add(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getSettings().getJiraServiceDeskIDField(), jpSdId);
+        joFields.add(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getInstance().getJiraServiceDeskIDField(), jpSdId);
 
         requestBody.add("fields", joFields);
 
@@ -158,7 +158,7 @@ public class JiraHandlerImpl implements JiraHandler {
             return false;
         }
 
-        JsonObject jo = restJsonCaller.callRest(Settings.getSettings().getJiraHttpsURL() + "/issue", basicAuth,
+        JsonObject jo = restJsonCaller.callRest(Settings.getInstance().getJiraHttpsURL() + "/issue", basicAuth,
                 requestBody, "POST", 201);
 
         if (jo == null) {
@@ -184,12 +184,12 @@ public class JiraHandlerImpl implements JiraHandler {
         JsonObject requestBody = new JsonObject();
 
         JsonObject joTransition = new JsonObject();
-        joTransition.addProperty("id", Settings.getSettings().getJiraTransitionIdResolvedToTodo());
+        joTransition.addProperty("id", Settings.getInstance().getJiraTransitionIdResolvedToTodo());
 
         requestBody.add("transition", joTransition);
 
         try {
-            JsonObject jo = restJsonCaller.callRest(Settings.getSettings().getJiraHttpsURL()
+            JsonObject jo = restJsonCaller.callRest(Settings.getInstance().getJiraHttpsURL()
                             + String.format("/issue/%s/transitions?expand=transitions.fields", jiraKey)
                     , basicAuth, requestBody, "POST", 204);
             logger.info("Jira task reopened: " + jiraKey);
@@ -206,7 +206,7 @@ public class JiraHandlerImpl implements JiraHandler {
         JsonObject requestBody = new JsonObject();
         requestBody.addProperty("body", comment);
 
-        JsonObject jo = restJsonCaller.callRest(Settings.getSettings().getJiraHttpsURL()
+        JsonObject jo = restJsonCaller.callRest(Settings.getInstance().getJiraHttpsURL()
                         + String.format("/issue/%s/comment", jiraKey)
                 , basicAuth, requestBody, "POST", 201);
 

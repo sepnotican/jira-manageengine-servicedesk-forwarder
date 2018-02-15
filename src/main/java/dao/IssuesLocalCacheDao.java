@@ -18,7 +18,7 @@ public class IssuesLocalCacheDao extends SQLiteDao implements IssuesLocalCache {
 
     private IssuesLocalCacheDao() {
 
-        String[] sqliteUrlSplitted = Settings.getSettings().getDatabaseURL().split(":");
+        String[] sqliteUrlSplitted = Settings.getInstance().getDatabaseURL().split(":");
 
         File fileDB = new File(sqliteUrlSplitted[2]);
         if (!fileDB.exists())

@@ -29,7 +29,7 @@ public class MainClass {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "--createSettings": {
-                    Settings.getSettings().createSettings();
+                    Settings.getInstance().createSettings();
                     System.out.println("Settings created.");
                     System.exit(0);
                 }
@@ -51,14 +51,14 @@ public class MainClass {
                                 throw new RuntimeException("FATAL ERROR : Unable to create \"log\" directory!");
                             }
 
-                        Settings.getSettings().load();
+                        Settings.getInstance().load();
 
                         Injector injector = Guice.createInjector(new AppInjector());
 
 //                        Runnable issueTransportThread = new IssueTransportThread();
                         Runnable issueTransportThread = injector.getInstance(IssueTransportThread.class);
 
-                        if (Settings.getSettings().isModuleIssueTransortActive()) {
+                        if (Settings.getInstance().isModuleIssueTransortActive()) {
                             new Thread(issueTransportThread).start();
                         } else {
                             logger.warn("issue Transport Thread is not active in settings.json");

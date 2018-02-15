@@ -12,9 +12,9 @@ import java.io.*;
 public class Settings {
 
     private static final String APP_ROOT_DIR = System.getProperty("user.dir");
-    private static final String SETTING_FILE_NAME = APP_ROOT_DIR + "/settings.json";
+    private static final String SETTING_FILE_NAME = APP_ROOT_DIR + "/instance.json";
     private static Logger logger = Logger.getLogger(Settings.class);
-    private static Settings settings = null;
+    private static Settings instance = null;
 
     private String jiraBasicAuth = null;
     private int jiraStatusIdResolved;
@@ -40,10 +40,10 @@ public class Settings {
     private Settings() {
     }
 
-    public static Settings getSettings() {
-        if (settings == null)
-            settings = new Settings();
-        return settings;
+    public static Settings getInstance() {
+        if (instance == null)
+            instance = new Settings();
+        return instance;
     }
 
     public static String getAppRootDir() {
@@ -68,25 +68,25 @@ public class Settings {
 
     public void createSettings() {
 
-        getSettings();
-        settings.setServiceDeskTechnichianKey("aaaa-sss-ddd-ffffff");
-        settings.setServiceDeskHttpURL("http://servicedesk.example.com");
-        settings.setJiraHttpsURL("https://jira.example.com/rest/api/2");
-        settings.setJiraBasicAuth("jira_user:passwd");
-        settings.setServicedeskTransportTimeoutSec(180);
-        settings.setServicedeskForwardViewName("JIRA_AUTOCREATE_FILTER_NAME");
-        settings.setJiraResolutionField("100100");
-        settings.setJiraServiceDeskIDField("200200");
-        settings.setServicedeskStamp("servicedesk ##%s##"); //%s - Servicedesk Task ID
-        settings.setJiraStatusIdResolved(5);
-        settings.setJiraTransitionIdResolvedToTodo(191);
-        settings.setDatabaseURL("jdbc:sqlite:base.db");
-        settings.setJiraDefaultProject("DEV");
-        settings.setCheckIssuesInJiraByTextstampBeforeCreate(true);
+        getInstance();
+        instance.setServiceDeskTechnichianKey("aaaa-sss-ddd-ffffff");
+        instance.setServiceDeskHttpURL("http://servicedesk.example.com");
+        instance.setJiraHttpsURL("https://jira.example.com/rest/api/2");
+        instance.setJiraBasicAuth("jira_user:passwd");
+        instance.setServicedeskTransportTimeoutSec(180);
+        instance.setServicedeskForwardViewName("JIRA_AUTOCREATE_FILTER_NAME");
+        instance.setJiraResolutionField("100100");
+        instance.setJiraServiceDeskIDField("200200");
+        instance.setServicedeskStamp("servicedesk ##%s##"); //%s - Servicedesk Task ID
+        instance.setJiraStatusIdResolved(5);
+        instance.setJiraTransitionIdResolvedToTodo(191);
+        instance.setDatabaseURL("jdbc:sqlite:base.db");
+        instance.setJiraDefaultProject("DEV");
+        instance.setCheckIssuesInJiraByTextstampBeforeCreate(true);
 
-        Settings.settings.setModuleIssueTransortActive(false);
+        Settings.instance.setModuleIssueTransortActive(false);
 
-        Settings.settings.save();
+        Settings.instance.save();
     }
 
     public String getJiraDefaultProject() {
@@ -138,17 +138,17 @@ public class Settings {
             br = new BufferedReader(new InputStreamReader(fin));
 
             int i;
-            StringBuilder settings = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             while ((i = br.read()) > -1) {
-                settings.append((char) (i));
+                stringBuilder.append((char) (i));
             }
 
             Gson gson = new Gson();
-            Settings.settings = gson.fromJson(settings.toString(), Settings.class);
+            Settings.instance = gson.fromJson(stringBuilder.toString(), Settings.class);
 
         } catch (FileNotFoundException e) {
             logger.info("Run with --createSettings");
-            System.exit(1);
+            System.exit(-1);
         } catch (IOException e) {
             logger.error(e.getMessage());
         } finally {

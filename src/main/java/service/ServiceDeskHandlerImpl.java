@@ -38,7 +38,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
 
         paramsSet.put("from", Integer.toString(from));
         paramsSet.put("limit", Integer.toString(limit));
-        final String filterName = Settings.getSettings().getServicedeskForwardViewName();
+        final String filterName = Settings.getInstance().getServicedeskForwardViewName();
         final String idByName = getFilterIdByName(filterName);
         if (idByName == null) {
             logger.error("Resolving filter ID by name failed. filterName = ".concat(filterName));
@@ -245,7 +245,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
                         'c' == income.charAt(i + 2) &&
                         '=' == income.charAt(i + 3)) {
                     i += 5;
-                    sb.append("IMAGE: [").append(Settings.getSettings().getServiceDeskHttpURL()).append('/');
+                    sb.append("IMAGE: [").append(Settings.getInstance().getServiceDeskHttpURL()).append('/');
                     for (; '"' != income.charAt(i); i++) {
                         sb.append(income.charAt(i));
                     }

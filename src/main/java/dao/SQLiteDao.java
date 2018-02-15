@@ -9,7 +9,7 @@ import java.sql.*;
  * Created by muzafar on 6/14/17.
  */
 public abstract class SQLiteDao {
-    private final static String databaseURL = Settings.getSettings().getDatabaseURL();
+    private final static String databaseURL = Settings.getInstance().getDatabaseURL();
     protected static Logger logger = Logger.getLogger(SQLiteDao.class);
     protected Statement s = null;
     protected ResultSet rs = null;
