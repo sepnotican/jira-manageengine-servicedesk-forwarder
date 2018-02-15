@@ -23,10 +23,11 @@ import java.net.URLEncoder;
  * Created by Zafar on 07.02.2017.
  */
 @Singleton
-public class RestXMLCallerImpl {
+public class RestXMLCallerImpl implements RestXMLCaller {
 
     private final HttpClient httpclient = HttpClients.createDefault();
 
+    @Override
     public Document callRestDOM(String module, String operation_name, String input_data) {
 
         String url_txt = Settings.getSettings().getServiceDeskHttpURL() + "/" + module + "?TECHNICIAN_KEY=" + Settings.getSettings().getServiceDeskTechnichianKey();
@@ -52,9 +53,8 @@ public class RestXMLCallerImpl {
                 instream = entity.getContent();
 
                 DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document document = documentBuilder.parse(instream); //DOM
 
-                return document;
+                return documentBuilder.parse(instream);
             }
 
         } catch (IOException | SAXException | ParserConfigurationException e) {

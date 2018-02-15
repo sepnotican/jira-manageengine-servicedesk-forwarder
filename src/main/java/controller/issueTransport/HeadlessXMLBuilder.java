@@ -11,7 +11,7 @@ import java.util.Map;
  * Class for build 'headless' XML for ServiceDesk
  */
 @Singleton
-public class UnheadedXMLBuilder {
+public class HeadlessXMLBuilder {
 
     public String makeTag(String tag, String value) {
         return "<" + tag + ">" + value + "</" + tag + ">";

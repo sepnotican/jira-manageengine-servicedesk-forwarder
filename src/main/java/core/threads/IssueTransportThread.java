@@ -10,12 +10,16 @@ import service.IssuesTransportService;
  */
 public class IssueTransportThread implements Runnable {
 
-    @Inject
     private IssuesTransportService issuesTransportService;
+
+    @Inject
+    public IssueTransportThread(IssuesTransportService issuesTransportService) {
+        this.issuesTransportService = issuesTransportService;
+    }
 
     @Override
     public void run() {
-        Tools.logger.info("Issue transport service started.");
+        Tools.logger.info("Issue transport thread started.");
 
         int timeout;
         while (true) {

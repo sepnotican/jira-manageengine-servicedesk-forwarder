@@ -1,5 +1,7 @@
 package core;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import core.threads.IssueTransportThread;
 import dao.IssuesLocalCache;
 
@@ -39,7 +41,10 @@ public class MainClass {
                     try {
                         Settings.getSettings().load();
 
-                        Runnable issueTransportThread = new IssueTransportThread();
+                        Injector injector = Guice.createInjector(new AppInjector());
+
+//                        Runnable issueTransportThread = new IssueTransportThread();
+                        Runnable issueTransportThread = injector.getInstance(IssueTransportThread.class);
 
                         if (Settings.getSettings().isModuleIssueTransortActive()) {
                             new Thread(issueTransportThread).start();
@@ -47,7 +52,8 @@ public class MainClass {
                             Tools.logger.warn("issue Transport Thread is not active in settings.json");
                         }
                     } catch (Exception e) {
-                        Tools.logger.fatal(e.getMessage());
+                        e.printStackTrace();
+                        Tools.logger.error(e.getMessage());
                     }
 
                 }
