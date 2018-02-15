@@ -1,13 +1,13 @@
-package service;
+package controller.issueTransport;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import controller.issueTransport.JiraHandler;
-import controller.issueTransport.ServiceDeskHandler;
 import core.Settings;
 import core.Tools;
 import dao.IssuesLocalCache;
 import entity.TaskModel;
+import service.JiraHandler;
+import service.ServiceDeskHandler;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * Created by sepnotican on 14.06.17.
  */
 @Singleton
-public class IssuesTransportService {
+public class IssuesTransportController {
 
     @Inject
     private JiraHandler jiraHandler;
@@ -32,7 +32,7 @@ public class IssuesTransportService {
 
         tasksFromSD.forEach(taskSD -> {
 
-            TaskModel jiraResult = jiraHandler.getIssueByIDTextSearch(taskSD.getId_sd());
+            TaskModel jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_SD_ID_CUSTOMFIELD);
             //3 not cached - need to create
             if (taskSD.getJiraKey() == null) {
                 if (jiraResult != null) {

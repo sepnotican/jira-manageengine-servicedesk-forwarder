@@ -1,7 +1,9 @@
-package controller.issueTransport;
+package service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import controller.issueTransport.HeadlessXMLBuilder;
+import controller.issueTransport.RestXMLCaller;
 import core.Settings;
 import core.Tools;
 import entity.TaskModel;

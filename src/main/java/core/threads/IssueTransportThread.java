@@ -1,20 +1,20 @@
 package core.threads;
 
 import com.google.inject.Inject;
+import controller.issueTransport.IssuesTransportController;
 import core.Settings;
 import core.Tools;
-import service.IssuesTransportService;
 
 /**
  * Created by muzafar on 6/14/17.
  */
 public class IssueTransportThread implements Runnable {
 
-    private IssuesTransportService issuesTransportService;
+    private IssuesTransportController issuesTransportController;
 
     @Inject
-    public IssueTransportThread(IssuesTransportService issuesTransportService) {
-        this.issuesTransportService = issuesTransportService;
+    public IssueTransportThread(IssuesTransportController issuesTransportController) {
+        this.issuesTransportController = issuesTransportController;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class IssueTransportThread implements Runnable {
                 Settings.getSettings().load();
                 timeout = Math.max(Settings.getSettings().getServicedeskTransportTimeoutSec() * 1000, 30000);
                 Thread.sleep(timeout);
-                issuesTransportService.checkForChanges();
+                issuesTransportController.checkForChanges();
             } catch (Exception e) {
                 e.printStackTrace();
                 Tools.logger.error(e.getMessage());

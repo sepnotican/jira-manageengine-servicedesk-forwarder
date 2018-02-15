@@ -20,6 +20,7 @@ public class Settings {
     private int jiraStatusIdResolved;
     private int jiraTransitionIdResolvedToTodo;
     private String jiraHttpsURL = null;
+    private String jiraDefaultProject = null;
 
     private String serviceDeskHttpURL = null;
     private String servicedeskForwardViewName = null;
@@ -65,16 +66,25 @@ public class Settings {
         settings.setJiraBasicAuth("jira_user:passwd");
         settings.setServicedeskTransportTimeoutSec(180);
         settings.setServicedeskForwardViewName("JIRA_AUTOCREATE_FILTER_NAME");
-        settings.setJiraResolutionField("customfield_100");
-        settings.setJiraServiceDeskIDField("customfield_200");
-        settings.setServicedeskStamp("servicedesk ##%s##");
+        settings.setJiraResolutionField("100100");
+        settings.setJiraServiceDeskIDField("200200");
+        settings.setServicedeskStamp("servicedesk ##%s##"); //%s - Servicedesk Task ID
         settings.setJiraStatusIdResolved(5);
         settings.setJiraTransitionIdResolvedToTodo(191);
         settings.setDatabaseURL("jdbc:sqlite:base.db");
+        settings.setJiraDefaultProject("DEV");
 
         Settings.settings.setModuleIssueTransortActive(false);
 
         Settings.settings.save();
+    }
+
+    public String getJiraDefaultProject() {
+        return jiraDefaultProject;
+    }
+
+    public void setJiraDefaultProject(String jiraDefaultProject) {
+        this.jiraDefaultProject = jiraDefaultProject;
     }
 
     public String getServicedeskStamp() {

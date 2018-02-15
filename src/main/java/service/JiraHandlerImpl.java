@@ -1,4 +1,4 @@
-package controller.issueTransport;
+package service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import controller.issueTransport.RestJsonCaller;
 import core.Settings;
 import core.Tools;
 import entity.TaskModel;
@@ -16,34 +17,52 @@ import java.util.Base64;
  * Created by muzafar on 3/10/17.
  */
 @Singleton
-public class JiraHandler {
+public class JiraHandlerImpl implements JiraHandler {
+
+    private static final Settings settings = Settings.getSettings();
+    private static final String JIRA_CUSTOMFIELD_JSON_PREFIX = "customfield_";
+    private static final String JIRA_CUSTOMFIELD_JQL_TEMPLATE = "cf[%s]"; //%s - custom field id
 
     private static final String JIRA_ISSUE_TYPE_STORY = "Story";
-    final private String CUSTOM_FIELD_RESOLUTION = Settings.getSettings().getJiraResolutionField();
+
+    private static final String JQL_QUERY_TEMPLATE_GET_ISSUE_BY_TEXTSTAMP
+            = "project=" + settings.getJiraDefaultProject() + " AND text ~ \"%s\" ORDER BY Key ASC"; //%s - servicedesk stamp;
+    private static final String JQL_QUERY_TEMPLATE_GET_ISSUE_BY_CUSTOMFIELD
+            = "project=" + settings.getJiraDefaultProject() + " AND "
+            + String.format(JIRA_CUSTOMFIELD_JQL_TEMPLATE, settings.getJiraServiceDeskIDField())
+            + " ~ \"%d\" ORDER BY Key ASC"; //%d - servicedesk id;
     final private String basicAuth;
 
     @Inject
     private RestJsonCaller restJsonCaller;
 
-    public JiraHandler() {
+    public JiraHandlerImpl() {
         Base64.Encoder encoder = Base64.getEncoder();
         basicAuth = encoder.encodeToString(Settings.getSettings().getJiraBasicAuth().getBytes());
     }
 
-    public TaskModel getIssueByIDTextSearch(int sd_id) {
+    @Override
+    public TaskModel getIssueByID(int sd_id, QueryMode queryMode) {
         TaskModel result_ = null;
 
         JsonObject requestBody = new JsonObject();
 
-        requestBody.addProperty("jql",
-                String.format("project=B1C AND text ~ \"" + Settings.getSettings().getServicedeskStamp() + "\" ORDER BY Key ASC", Integer.toString(sd_id)));
+        String jql;
+        if (queryMode == QueryMode.BY_TEXTSTAMP) {
+            final String sdStamp = String.format(Settings.getSettings().getServicedeskStamp(), Integer.toString(sd_id));
+            jql = String.format(JQL_QUERY_TEMPLATE_GET_ISSUE_BY_TEXTSTAMP, sdStamp);
+        } else {
+            jql = String.format(JQL_QUERY_TEMPLATE_GET_ISSUE_BY_CUSTOMFIELD, sd_id);
+        }
+
+        requestBody.addProperty("jql", jql);
         requestBody.addProperty("startAt", 0);
         requestBody.addProperty("maxResults", 2);
 
         JsonArray fieldsArray = new JsonArray();
         fieldsArray.add("id");
         fieldsArray.add("key");
-        fieldsArray.add(CUSTOM_FIELD_RESOLUTION);
+        fieldsArray.add(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getSettings().getJiraResolutionField());
         fieldsArray.add("status");
         fieldsArray.add("assignee");
 
@@ -77,7 +96,7 @@ public class JiraHandler {
                     int statusCode = fieldsObject.getAsJsonObject("status").get("id").getAsInt();
                     taskModel.setJiraStatus(statusCode);
 
-                    JsonElement jeResolution = fieldsObject.get(CUSTOM_FIELD_RESOLUTION);
+                    JsonElement jeResolution = fieldsObject.get(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getSettings().getJiraResolutionField());
                     if (jeResolution != null && !jeResolution.isJsonNull()) {
                         String resolution = jeResolution.getAsString();
                         taskModel.setResolution(resolution);
@@ -92,10 +111,12 @@ public class JiraHandler {
         return result_;
     }
 
+    @Override
     public boolean createIssueInJira(TaskModel taskModel) {
         return createIssueInJira(taskModel, false);
     }
 
+    @Override
     public boolean createIssueInJira(TaskModel taskModel, boolean onlyBuildQuery) {
 
         JsonObject requestBody = new JsonObject();
@@ -127,7 +148,7 @@ public class JiraHandler {
         joFields.add("issuetype", joIssuetype);
 
         JsonElement jpSdId = new JsonPrimitive(String.valueOf(taskModel.getId_sd()));
-        joFields.add(Settings.getSettings().getJiraServiceDeskIDField(), jpSdId);
+        joFields.add(JIRA_CUSTOMFIELD_JSON_PREFIX + Settings.getSettings().getJiraServiceDeskIDField(), jpSdId);
 
         requestBody.add("fields", joFields);
 
@@ -140,7 +161,7 @@ public class JiraHandler {
                 requestBody, "POST", 201);
 
         if (jo == null) {
-            Tools.logger.warn("ERROR while creating issue: " + taskModel.getId_sd() + '\n' +
+            Tools.logger.error("ERROR while creating issue: " + taskModel.getId_sd() + '\n' +
                     "Jira response is null");
             return false;
         }
@@ -151,11 +172,12 @@ public class JiraHandler {
             Tools.logger.info("Issue has been created : " + taskModel.getId_sd());
             return true;
         } else {
-            Tools.logger.warn("ERROR while creating issue: " + taskModel.getId_sd() + '\n' + jo.toString());
+            Tools.logger.error("ERROR while creating issue: " + taskModel.getId_sd() + '\n' + jo.toString());
             return false;
         }
     }
 
+    @Override
     public void reopenTaskByKey(String jiraKey) {
 
         JsonObject requestBody = new JsonObject();
@@ -177,6 +199,7 @@ public class JiraHandler {
 
     }
 
+    @Override
     public void addCommentByKey(String jiraKey, String comment) {
 
         JsonObject requestBody = new JsonObject();
