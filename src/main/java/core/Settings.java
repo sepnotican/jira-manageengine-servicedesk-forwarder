@@ -34,6 +34,7 @@ public class Settings {
     private boolean moduleIssueTransortActive = false;
     private boolean closeTaskInSDWhenJiraClosed;
     private boolean reopenTaskInJiraWhenSDReopen;
+    private boolean checkIssuesInJiraByTextstampBeforeCreate;
     private String databaseURL = "";
 
     private Settings() {
@@ -57,6 +58,14 @@ public class Settings {
         this.jiraResolutionField = jiraResolutionField;
     }
 
+    public boolean isCheckIssuesInJiraByTextstampBeforeCreate() {
+        return checkIssuesInJiraByTextstampBeforeCreate;
+    }
+
+    public void setCheckIssuesInJiraByTextstampBeforeCreate(boolean checkIssuesInJiraByTextstampBeforeCreate) {
+        this.checkIssuesInJiraByTextstampBeforeCreate = checkIssuesInJiraByTextstampBeforeCreate;
+    }
+
     public void createSettings() {
 
         getSettings();
@@ -73,6 +82,7 @@ public class Settings {
         settings.setJiraTransitionIdResolvedToTodo(191);
         settings.setDatabaseURL("jdbc:sqlite:base.db");
         settings.setJiraDefaultProject("DEV");
+        settings.setCheckIssuesInJiraByTextstampBeforeCreate(true);
 
         Settings.settings.setModuleIssueTransortActive(false);
 
@@ -143,8 +153,10 @@ public class Settings {
             Tools.logger.error(e.getMessage());
         } finally {
             try {
-                br.close();
-                fin.close();
+                if (br != null)
+                    br.close();
+                if (fin != null)
+                    fin.close();
             } catch (NullPointerException | IOException e) {
                 Tools.logger.error(e.getMessage());
             }
@@ -223,9 +235,11 @@ public class Settings {
             Tools.logger.error(e.getMessage());
         } finally {
             try {
-                fout.flush();
-                fout.close();
-            } catch (NullPointerException | IOException e) {
+                if (fout != null) {
+                    fout.flush();
+                    fout.close();
+                }
+            } catch (IOException e) {
                 Tools.logger.error(e.getMessage());
             }
         }

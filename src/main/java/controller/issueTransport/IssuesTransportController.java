@@ -22,6 +22,12 @@ public class IssuesTransportController {
     @Inject
     private ServiceDeskHandler serviceDeskHandler;
 
+    private Settings settings;
+
+    public IssuesTransportController() {
+        settings = Settings.getSettings();
+    }
+
     public void checkForChanges() {
 
         //1 check actual tasks from SD
@@ -30,9 +36,14 @@ public class IssuesTransportController {
         //2 load cached fields from local DB
         IssuesLocalCache.instance.fillTasksCachedInfo(tasksFromSD);
 
-        tasksFromSD.forEach(taskSD -> {
+        for (TaskModel taskSD : tasksFromSD) {
 
             TaskModel jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_SD_ID_CUSTOMFIELD);
+
+            if (jiraResult == null
+                    && settings.isCheckIssuesInJiraByTextstampBeforeCreate())
+                jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_TEXTSTAMP);
+
             //3 not cached - need to create
             if (taskSD.getJiraKey() == null) {
                 if (jiraResult != null) {
@@ -45,10 +56,11 @@ public class IssuesTransportController {
                     else
                         Tools.logger.warn("Creating issue in jira failed: " + taskSD.getId_sd());
                 }
-            } else if (Settings.getSettings().isCloseTaskInSDWhenJiraClosed()
+            } else if (settings.isCloseTaskInSDWhenJiraClosed()
+                    && jiraResult != null
                     && (jiraResult.getResolution() != null
                     && taskSD.getResolution() == null
-                    && jiraResult.getJiraStatus() == Settings.getSettings().getJiraStatusIdResolved())) {
+                    && jiraResult.getJiraStatus() == settings.getJiraStatusIdResolved())) {
                 //need check solution and Resolved status
                 taskSD.setResolution(jiraResult.getResolution());
                 //update SD task - set resolution and status = Closed
@@ -58,19 +70,17 @@ public class IssuesTransportController {
                         , jiraResult.getAssingnee()))
                     updateIssueInLocalCache(taskSD);
 
-            } else if (Settings.getSettings().isReopenTaskInJiraWhenSDReopen()
-                    && jiraResult.getJiraStatus() == Settings.getSettings().getJiraStatusIdResolved()) {
+            } else if (settings.isReopenTaskInJiraWhenSDReopen()
+                    && jiraResult != null
+                    && jiraResult.getJiraStatus() == settings.getJiraStatusIdResolved()) {
                 //task in active filter SD and closed in Jira = reopen.
                 jiraHandler.reopenTaskByKey(jiraResult.getJiraKey());
                 jiraHandler.addCommentByKey(jiraResult.getJiraKey()
                         , "Task reopened by service desk. Check it!");
                 taskSD.setResolution(null);
                 updateIssueInLocalCache(taskSD);
-
             }
-        });
-
-
+        }
     }
 
     private boolean createIssueInJira(TaskModel taskModel) {
