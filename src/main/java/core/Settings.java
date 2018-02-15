@@ -12,7 +12,7 @@ import java.io.*;
 public class Settings {
 
     private static final String APP_ROOT_DIR = System.getProperty("user.dir");
-    private static final String SETTING_FILE_NAME = APP_ROOT_DIR + "/instance.json";
+    private static final String SETTING_FILE_NAME = APP_ROOT_DIR + "/settings.json";
     private static Logger logger = Logger.getLogger(Settings.class);
     private static Settings instance = null;
 
