@@ -9,7 +9,8 @@ import com.google.inject.Singleton;
 import core.Settings;
 import core.Tools;
 import entity.TaskModel;
-import sun.misc.BASE64Encoder;
+
+import java.util.Base64;
 
 /**
  * Created by muzafar on 3/10/17.
@@ -25,8 +26,8 @@ public class JiraHandler {
     private RestJsonCaller restJsonCaller;
 
     public JiraHandler() {
-        BASE64Encoder enc64 = new BASE64Encoder();
-        basicAuth = enc64.encode(Settings.getSettings().getJiraBasicAuth().getBytes());
+        Base64.Encoder encoder = Base64.getEncoder();
+        basicAuth = encoder.encodeToString(Settings.getSettings().getJiraBasicAuth().getBytes());
     }
 
     public TaskModel getIssueByIDTextSearch(int sd_id) {
@@ -112,15 +113,14 @@ public class JiraHandler {
         summary = "##" + Integer.toString(taskModel.getId_sd()) + "## " + summary;
         joFields.addProperty("summary", summary);
 
-        StringBuilder descriprion = new StringBuilder(taskModel.getDescription());
-        descriprion.append("\n\nRequester: ").append(taskModel.getRequester()).append('\n')
-                .append(String.format(Settings.getSettings().getServicedeskStamp(), taskModel.getId_sd()))
-                .append("\nlink: ")
-                .append(Settings.getSettings().getServiceDeskHttpURL())
-                .append("/WorkOrder.do?woMode=viewWO&woID=").append(taskModel.getId_sd())
-                .append('\n');
+        String descriprion = taskModel.getDescription() + "\n\nRequester: " + taskModel.getRequester() + '\n' +
+                String.format(Settings.getSettings().getServicedeskStamp(), taskModel.getId_sd()) +
+                "\nlink: " +
+                Settings.getSettings().getServiceDeskHttpURL() +
+                "/WorkOrder.do?woMode=viewWO&woID=" + taskModel.getId_sd() +
+                '\n';
 
-        joFields.addProperty("description", descriprion.toString());
+        joFields.addProperty("description", descriprion);
 
         JsonObject joIssuetype = new JsonObject();
         joIssuetype.addProperty("name", JIRA_ISSUE_TYPE_STORY);

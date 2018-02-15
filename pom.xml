@@ -10,7 +10,6 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <sl4j-version>1.5.8</sl4j-version>
     </properties>
 
     <dependencies>
