@@ -13,7 +13,7 @@ public class Settings {
 
     private static final String APP_ROOT_DIR = System.getProperty("user.dir");
     private static final String SETTING_FILE_NAME = APP_ROOT_DIR + "/settings.json";
-    private static Logger logger = Tools.logger;
+    private static Logger logger = Logger.getLogger(Settings.class);
     private static Settings settings = null;
 
     private String jiraBasicAuth = null;
@@ -150,15 +150,15 @@ public class Settings {
             logger.info("Run with --createSettings");
             System.exit(1);
         } catch (IOException e) {
-            Tools.logger.error(e.getMessage());
+            logger.error(e.getMessage());
         } finally {
             try {
                 if (br != null)
                     br.close();
                 if (fin != null)
                     fin.close();
-            } catch (NullPointerException | IOException e) {
-                Tools.logger.error(e.getMessage());
+            } catch (IOException e) {
+                logger.error(e.getMessage());
             }
         }
     }
@@ -232,7 +232,7 @@ public class Settings {
             fout.write(bytes);
 
         } catch (IOException e) {
-            Tools.logger.error(e.getMessage());
+            logger.error(e.getMessage());
         } finally {
             try {
                 if (fout != null) {
@@ -240,7 +240,7 @@ public class Settings {
                     fout.close();
                 }
             } catch (IOException e) {
-                Tools.logger.error(e.getMessage());
+                logger.error(e.getMessage());
             }
         }
     }

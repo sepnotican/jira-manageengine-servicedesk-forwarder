@@ -2,12 +2,12 @@ package controller.issueTransport;
 
 import com.google.inject.Singleton;
 import core.Settings;
-import core.Tools;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -24,6 +24,7 @@ import java.net.URLEncoder;
  */
 @Singleton
 public class RestXMLCallerImpl implements RestXMLCaller {
+    private static final Logger logger = Logger.getLogger(RestXMLCallerImpl.class);
 
     private final HttpClient httpclient = HttpClients.createDefault();
 
@@ -44,7 +45,7 @@ public class RestXMLCallerImpl implements RestXMLCaller {
             HttpEntity entity = response.getEntity();
 
             if (response.getStatusLine().getStatusCode() == 404) {
-                Tools.logger.error("Got 404 response code. Module = ".concat(module));
+                logger.error("Got 404 response code. Module = ".concat(module));
                 return null;
             }
 
@@ -58,14 +59,14 @@ public class RestXMLCallerImpl implements RestXMLCaller {
             }
 
         } catch (IOException | SAXException | ParserConfigurationException e) {
-            Tools.logger.error(e.getMessage());
+            logger.error(e.getMessage());
         } finally {
             try {
                 if (instream != null) {
                     instream.close();
                 }
             } catch (IOException e) {
-                Tools.logger.error(e.getMessage());
+                logger.error(e.getMessage());
             }
         }
 

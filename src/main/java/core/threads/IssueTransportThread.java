@@ -3,7 +3,7 @@ package core.threads;
 import com.google.inject.Inject;
 import controller.issueTransport.IssuesTransportController;
 import core.Settings;
-import core.Tools;
+import org.apache.log4j.Logger;
 
 /**
  * Created by muzafar on 6/14/17.
@@ -11,6 +11,7 @@ import core.Tools;
 public class IssueTransportThread implements Runnable {
 
     private IssuesTransportController issuesTransportController;
+    protected static Logger logger = Logger.getLogger(IssueTransportThread.class);
 
     @Inject
     public IssueTransportThread(IssuesTransportController issuesTransportController) {
@@ -19,7 +20,7 @@ public class IssueTransportThread implements Runnable {
 
     @Override
     public void run() {
-        Tools.logger.info("Issue transport thread started.");
+        logger.info("Issue transport thread started.");
 
         int timeout;
         while (true) {
@@ -30,7 +31,7 @@ public class IssueTransportThread implements Runnable {
                 issuesTransportController.checkForChanges();
             } catch (Exception e) {
                 e.printStackTrace();
-                Tools.logger.error(e.getMessage());
+                logger.error(e.getMessage());
             }
         }
     }

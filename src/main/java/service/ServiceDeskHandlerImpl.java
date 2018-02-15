@@ -5,8 +5,8 @@ import com.google.inject.Singleton;
 import controller.issueTransport.HeadlessXMLBuilder;
 import controller.issueTransport.RestXMLCaller;
 import core.Settings;
-import core.Tools;
 import entity.TaskModel;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -22,6 +22,8 @@ import java.util.Map;
  */
 @Singleton
 public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
+
+    private static final Logger logger = Logger.getLogger(ServiceDeskHandlerImpl.class);
 
     @Inject
     private RestXMLCaller restXMLCaller;
@@ -39,7 +41,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
         final String filterName = Settings.getSettings().getServicedeskForwardViewName();
         final String idByName = getFilterIdByName(filterName);
         if (idByName == null) {
-            Tools.logger.error("Resolving filter ID by name failed. filterName = ".concat(filterName));
+            logger.error("Resolving filter ID by name failed. filterName = ".concat(filterName));
             return result_;
         }
 
@@ -50,7 +52,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
         Document document = restXMLCaller.callRestDOM("sdpapi/request", "GET_REQUESTS", xml);
 
         if (document == null) {
-            Tools.logger.error("Document is empty. xml= " + xml);
+            logger.error("Document is empty. xml= " + xml);
             return result_;
         }
         // Получаем корневой элемент
@@ -94,7 +96,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
                                     try {
                                         task.setId_sd(Integer.parseInt(value.getTextContent()));
                                     } catch (NumberFormatException e) {
-                                        Tools.logger.error(e.getMessage());
+                                        logger.error(e.getMessage());
                                         continue;
                                     }
                                     break;
@@ -125,7 +127,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
         Document document = restXMLCaller.callRestDOM("sdpapi/request".concat("/").concat(Integer.toString(taskModel.getId_sd())), "GET_REQUEST", xml);
 
         if (document == null) {
-            Tools.logger.error("Can't get document (null). taskModel = ".concat(String.valueOf(taskModel.getId_sd())));
+            logger.error("Can't get document (null). taskModel = ".concat(String.valueOf(taskModel.getId_sd())));
             return;
         }
         // Получаем корневой элемент
@@ -175,7 +177,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
         Document document = restXMLCaller.callRestDOM("sdpapi/request", "GET_REQUEST_FILTERS", null);
 
         if (document == null) {
-            Tools.logger.error("Can't get document (null). Filtername = ".concat(filterName));
+            logger.error("Can't get document (null). Filtername = ".concat(filterName));
             return null;
         }
         // Получаем корневой элемент
@@ -288,7 +290,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
 
 //        ((DeferredDocumentImpl) document).getNodeValue(11)
         if (document == null) {
-            Tools.logger.error("Document is empty. xml= " + xml);
+            logger.error("Document is empty. xml= " + xml);
             return false;
         }
 
@@ -311,10 +313,10 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
             }
         }
         if (status.equals("Success")) {
-            Tools.logger.info("Resolution added. SD ID: " + sd_id);
+            logger.info("Resolution added. SD ID: " + sd_id);
             return true;
         } else {
-            Tools.logger.error("Error while adding resolution Service desk request. SD ID:" + sd_id
+            logger.error("Error while adding resolution Service desk request. SD ID:" + sd_id
                     + "\nMessage: " + message);
             return false;
         }
@@ -334,7 +336,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
         Document document = restXMLCaller.callRestDOM(url, "CLOSE_REQUEST", null);
 
         if (document == null) {
-            Tools.logger.error("Document is empty. SD ID: " + sd_id);
+            logger.error("Document is empty. SD ID: " + sd_id);
             return false;
         }
 
@@ -362,7 +364,7 @@ public class ServiceDeskHandlerImpl implements ServiceDeskHandler {
             }
         }
         if (!status.equals("Success")) {
-            Tools.logger.error("Error while closing Service desk request. SD ID:" + sd_id
+            logger.error("Error while closing Service desk request. SD ID:" + sd_id
                     + "\nMessage: " + message);
             return false;
         }

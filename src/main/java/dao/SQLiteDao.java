@@ -1,7 +1,6 @@
 package dao;
 
 import core.Settings;
-import core.Tools;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -11,7 +10,7 @@ import java.sql.*;
  */
 public abstract class SQLiteDao {
     private final static String databaseURL = Settings.getSettings().getDatabaseURL();
-    protected static Logger logger = Tools.logger;
+    protected static Logger logger = Logger.getLogger(SQLiteDao.class);
     protected Statement s = null;
     protected ResultSet rs = null;
     private Connection c = null;

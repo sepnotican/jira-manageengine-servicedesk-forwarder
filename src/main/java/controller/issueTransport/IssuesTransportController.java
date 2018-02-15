@@ -3,9 +3,9 @@ package controller.issueTransport;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import core.Settings;
-import core.Tools;
 import dao.IssuesLocalCache;
 import entity.TaskModel;
+import org.apache.log4j.Logger;
 import service.JiraHandler;
 import service.ServiceDeskHandler;
 
@@ -16,6 +16,8 @@ import java.util.List;
  */
 @Singleton
 public class IssuesTransportController {
+
+    private static final Logger logger = Logger.getLogger(IssuesTransportController.class);
 
     @Inject
     private JiraHandler jiraHandler;
@@ -54,7 +56,7 @@ public class IssuesTransportController {
                     if (createIssueInJira(taskSD))
                         updateIssueInLocalCache(taskSD); //3.3. make presist flag in local DB
                     else
-                        Tools.logger.warn("Creating issue in jira failed: " + taskSD.getId_sd());
+                        logger.warn("Creating issue in jira failed: " + taskSD.getId_sd());
                 }
             } else if (settings.isCloseTaskInSDWhenJiraClosed()
                     && jiraResult != null

@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import core.threads.IssueTransportThread;
 import dao.IssuesLocalCache;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -12,6 +13,8 @@ import java.io.File;
  */
 
 public class MainClass {
+    private static final Logger logger = Logger.getLogger(MainClass.class);
+
     public static void main(String[] args) {
 
         if (args.length == 0) {
@@ -58,11 +61,11 @@ public class MainClass {
                         if (Settings.getSettings().isModuleIssueTransortActive()) {
                             new Thread(issueTransportThread).start();
                         } else {
-                            Tools.logger.warn("issue Transport Thread is not active in settings.json");
+                            logger.warn("issue Transport Thread is not active in settings.json");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Tools.logger.error(e.getMessage());
+                        logger.error(e.getMessage());
                         System.exit(-1);
                     }
 

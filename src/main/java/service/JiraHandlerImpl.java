@@ -8,8 +8,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import controller.issueTransport.RestJsonCaller;
 import core.Settings;
-import core.Tools;
 import entity.TaskModel;
+import org.apache.log4j.Logger;
 
 import java.util.Base64;
 
@@ -19,6 +19,7 @@ import java.util.Base64;
 @Singleton
 public class JiraHandlerImpl implements JiraHandler {
 
+    private static final Logger logger = Logger.getLogger(JiraHandlerImpl.class);
     private static final Settings settings = Settings.getSettings();
     private static final String JIRA_CUSTOMFIELD_JSON_PREFIX = "customfield_";
     private static final String JIRA_CUSTOMFIELD_JQL_TEMPLATE = "cf[%s]"; //%s - custom field id
@@ -76,7 +77,7 @@ public class JiraHandlerImpl implements JiraHandler {
 
             if (issuesArray.size() > 0) {
                 if (issuesArray.size() > 1)
-                    Tools.logger.warn("More of 1 result by issue: " + sd_id);
+                    logger.warn("More of 1 result by issue: " + sd_id);
                 JsonObject joIssue = issuesArray.get(0).getAsJsonObject();
                 JsonElement jsonElement = joIssue.get("key");
                 if (jsonElement != null) {
@@ -161,7 +162,7 @@ public class JiraHandlerImpl implements JiraHandler {
                 requestBody, "POST", 201);
 
         if (jo == null) {
-            Tools.logger.error("ERROR while creating issue: " + taskModel.getId_sd() + '\n' +
+            logger.error("ERROR while creating issue: " + taskModel.getId_sd() + '\n' +
                     "Jira response is null");
             return false;
         }
@@ -169,10 +170,10 @@ public class JiraHandlerImpl implements JiraHandler {
 
         if (jo.get("key") != null) {
             taskModel.setJiraKey(jo.get("key").getAsString());
-            Tools.logger.info("Issue has been created : " + taskModel.getId_sd());
+            logger.info("Issue has been created : " + taskModel.getId_sd());
             return true;
         } else {
-            Tools.logger.error("ERROR while creating issue: " + taskModel.getId_sd() + '\n' + jo.toString());
+            logger.error("ERROR while creating issue: " + taskModel.getId_sd() + '\n' + jo.toString());
             return false;
         }
     }
@@ -191,9 +192,9 @@ public class JiraHandlerImpl implements JiraHandler {
             JsonObject jo = restJsonCaller.callRest(Settings.getSettings().getJiraHttpsURL()
                             + String.format("/issue/%s/transitions?expand=transitions.fields", jiraKey)
                     , basicAuth, requestBody, "POST", 204);
-            Tools.logger.info("Jira task reopened: " + jiraKey);
+            logger.info("Jira task reopened: " + jiraKey);
         } catch (Exception e) {
-            Tools.logger.warn("Cannot reopen Jira task by key: " + jiraKey
+            logger.warn("Cannot reopen Jira task by key: " + jiraKey
                     + ", error: " + e.getMessage());
         }
 
@@ -210,7 +211,7 @@ public class JiraHandlerImpl implements JiraHandler {
                 , basicAuth, requestBody, "POST", 201);
 
         if (jo == null) {
-            Tools.logger.warn("Cannot add comment to Jira task by key: " + jiraKey
+            logger.warn("Cannot add comment to Jira task by key: " + jiraKey
                     + "\n comment = " + comment);
         }
 

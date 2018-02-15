@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Singleton;
-import core.Tools;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -35,7 +34,7 @@ import java.io.InputStream;
 @Singleton
 public class RestJsonCallerImpl implements RestJsonCaller {
 
-    private Logger logger = Tools.logger;
+    private static final Logger logger = Logger.getLogger(RestJsonCallerImpl.class);
     private CloseableHttpClient httpclient = null;
 
     public RestJsonCallerImpl() {
@@ -103,7 +102,7 @@ public class RestJsonCallerImpl implements RestJsonCaller {
 
             }
             if (response.getStatusLine().getStatusCode() != successCode) {
-                Tools.logger.error("Response code is not correct. Expected. :" +
+                logger.error("Response code is not correct. Expected. :" +
                         successCode + ", got: " + response.getStatusLine().getStatusCode()
                         + " message : \n" + buf.toString());
                 return null;
