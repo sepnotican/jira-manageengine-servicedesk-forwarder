@@ -5,6 +5,8 @@ import com.google.inject.Injector;
 import core.threads.IssueTransportThread;
 import dao.IssuesLocalCache;
 
+import java.io.File;
+
 /**
  * Created by muzafar on 5/30/17.
  */
@@ -39,6 +41,13 @@ public class MainClass {
                 case "--run": {
 
                     try {
+
+                        File logDir = new File("log");
+                        if (!(logDir.exists() && logDir.isDirectory()))
+                            if (!logDir.mkdir()) {
+                                throw new RuntimeException("FATAL ERROR : Unable to create \"log\" directory!");
+                            }
+
                         Settings.getSettings().load();
 
                         Injector injector = Guice.createInjector(new AppInjector());
@@ -54,6 +63,7 @@ public class MainClass {
                     } catch (Exception e) {
                         e.printStackTrace();
                         Tools.logger.error(e.getMessage());
+                        System.exit(-1);
                     }
 
                 }
