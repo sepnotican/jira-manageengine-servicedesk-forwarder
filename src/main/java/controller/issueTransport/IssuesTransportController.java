@@ -27,7 +27,7 @@ public class IssuesTransportController {
     private Settings settings;
 
     public IssuesTransportController() {
-        settings = Settings.getSettings();
+        settings = Settings.getInstance();
     }
 
     public void checkForChanges() {

@@ -31,7 +31,7 @@ public class RestXMLCallerImpl implements RestXMLCaller {
     @Override
     public Document callRestDOM(String module, String operation_name, String input_data) {
 
-        String url_txt = Settings.getSettings().getServiceDeskHttpURL() + "/" + module + "?TECHNICIAN_KEY=" + Settings.getSettings().getServiceDeskTechnichianKey();
+        String url_txt = Settings.getInstance().getServiceDeskHttpURL() + "/" + module + "?TECHNICIAN_KEY=" + Settings.getInstance().getServiceDeskTechnichianKey();
 
         InputStream instream = null;
         try {
