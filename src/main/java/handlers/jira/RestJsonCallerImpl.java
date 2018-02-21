@@ -1,4 +1,4 @@
-package controller.issueTransport;
+package handlers.jira;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,7 +17,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import service.IssueNotFoundException;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;

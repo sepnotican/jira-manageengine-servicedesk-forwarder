@@ -1,6 +1,6 @@
-package service;
+package handlers.jira;
 
-import entity.TaskModel;
+import repository.TaskModel;
 
 public interface JiraHandler {
 

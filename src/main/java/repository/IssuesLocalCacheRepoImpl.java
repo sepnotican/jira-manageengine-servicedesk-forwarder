@@ -1,8 +1,7 @@
-package dao;
+package repository;
 
 import com.google.inject.Singleton;
 import core.Settings;
-import entity.TaskModel;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -12,12 +11,12 @@ import java.util.List;
  * Created by muzafar on 6/14/17.
  */
 @Singleton
-public class IssuesLocalCacheDAOImpl extends SQLiteDao implements IssuesLocalCacheDAO {
+public class IssuesLocalCacheRepoImpl extends SQLiteRepo implements IssuesLocalCacheRepo {
 
-    private static IssuesLocalCacheDAOImpl self = null;
+    private static IssuesLocalCacheRepoImpl self = null;
 
-    private IssuesLocalCacheDAOImpl() {
-
+    private IssuesLocalCacheRepoImpl() {
+        Settings.load();
         String[] sqliteUrlSplitted = Settings.getInstance().getDatabaseURL().split(":");
 
         File fileDB = new File(sqliteUrlSplitted[2]);
@@ -26,9 +25,9 @@ public class IssuesLocalCacheDAOImpl extends SQLiteDao implements IssuesLocalCac
 
     }
 
-    public static IssuesLocalCacheDAOImpl getSelf() {
+    public static IssuesLocalCacheRepoImpl getSelf() {
         if (self == null)
-            self = new IssuesLocalCacheDAOImpl();
+            self = new IssuesLocalCacheRepoImpl();
         return self;
     }
 
@@ -47,13 +46,15 @@ public class IssuesLocalCacheDAOImpl extends SQLiteDao implements IssuesLocalCac
 
         } catch (SQLException e) {
             showSQLException(e);
+        } finally {
+            sqlClose();
         }
-        sqlClose();
+
         logger.warn("Database created.");
     }
 
     @Override
-    public void fillTasksCachedInfo(List<TaskModel> taskModelList) {
+    public void fillCachedJiraID(List<TaskModel> taskModelList) {
 
         final StringBuilder sql = new StringBuilder("SELECT sd_id, jira_key" +
                 " FROM taskJiraCreated" +

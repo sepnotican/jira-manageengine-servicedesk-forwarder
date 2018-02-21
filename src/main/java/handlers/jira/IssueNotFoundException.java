@@ -1,4 +1,4 @@
-package service;
+package handlers.jira;
 
 public class IssueNotFoundException extends RuntimeException {
 

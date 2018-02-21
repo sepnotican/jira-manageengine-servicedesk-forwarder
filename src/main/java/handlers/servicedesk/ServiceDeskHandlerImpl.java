@@ -1,11 +1,9 @@
-package service;
+package handlers.servicedesk;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import controller.issueTransport.HeadlessXMLBuilder;
-import controller.issueTransport.RestXMLCaller;
 import core.Settings;
-import entity.TaskModel;
+import repository.TaskModel;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

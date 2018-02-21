@@ -129,7 +129,7 @@ public class Settings {
         this.jiraTransitionIdResolvedToTodo = jiraTransitionIdResolvedToTodo;
     }
 
-    public synchronized void load() {
+    public static synchronized void load() {
         FileInputStream fin = null;
         BufferedReader br = null;
 

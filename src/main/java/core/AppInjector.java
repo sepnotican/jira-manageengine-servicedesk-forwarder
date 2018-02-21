@@ -1,14 +1,14 @@
 package core;
 
 import com.google.inject.AbstractModule;
-import controller.issueTransport.RestJsonCaller;
-import controller.issueTransport.RestJsonCallerImpl;
-import controller.issueTransport.RestXMLCaller;
-import controller.issueTransport.RestXMLCallerImpl;
-import service.JiraHandler;
-import service.JiraHandlerImpl;
-import service.ServiceDeskHandler;
-import service.ServiceDeskHandlerImpl;
+import handlers.jira.RestJsonCaller;
+import handlers.jira.RestJsonCallerImpl;
+import handlers.servicedesk.RestXMLCaller;
+import handlers.servicedesk.RestXMLCallerImpl;
+import handlers.jira.JiraHandler;
+import handlers.jira.JiraHandlerImpl;
+import handlers.servicedesk.ServiceDeskHandler;
+import handlers.servicedesk.ServiceDeskHandlerImpl;
 
 public class AppInjector extends AbstractModule {
 

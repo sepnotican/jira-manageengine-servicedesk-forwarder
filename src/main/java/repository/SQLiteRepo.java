@@ -1,4 +1,4 @@
-package dao;
+package repository;
 
 import core.Settings;
 import org.apache.log4j.Logger;
@@ -8,17 +8,21 @@ import java.sql.*;
 /**
  * Created by muzafar on 6/14/17.
  */
-public abstract class SQLiteDao {
-    private final static String databaseURL = Settings.getInstance().getDatabaseURL();
-    protected static Logger logger = Logger.getLogger(SQLiteDao.class);
+public abstract class SQLiteRepo {
+    protected static Logger logger = Logger.getLogger(SQLiteRepo.class);
     protected Statement s = null;
     protected ResultSet rs = null;
     private Connection c = null;
 
     protected void sqlOpen() {
         try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
             // create a connection to the database
-            c = DriverManager.getConnection(databaseURL);
+            c = DriverManager.getConnection(Settings.getInstance().getDatabaseURL());
 
         } catch (SQLException e) {
             logger.error("Unable to connect to SQLite.");
@@ -35,7 +39,6 @@ public abstract class SQLiteDao {
         } catch (SQLException e) {
             logger.error("Unable to create a static SQL statement.");
             showSQLException(e);
-            // We can't go much further without a result set, return...
         }
     }
 

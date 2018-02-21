@@ -1,4 +1,4 @@
-package service;
+package handlers.jira;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -6,9 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import controller.issueTransport.RestJsonCaller;
 import core.Settings;
-import entity.TaskModel;
+import repository.TaskModel;
 import org.apache.log4j.Logger;
 
 import java.util.Base64;
@@ -20,17 +19,16 @@ import java.util.Base64;
 public class JiraHandlerImpl implements JiraHandler {
 
     private static final Logger logger = Logger.getLogger(JiraHandlerImpl.class);
-    private static final Settings settings = Settings.getInstance();
     private static final String JIRA_CUSTOMFIELD_JSON_PREFIX = "customfield_";
     private static final String JIRA_CUSTOMFIELD_JQL_TEMPLATE = "cf[%s]"; //%s - custom field id
 
     private static final String JIRA_ISSUE_TYPE_STORY = "Story";
 
     private static final String JQL_QUERY_TEMPLATE_GET_ISSUE_BY_TEXTSTAMP
-            = "project=" + settings.getJiraDefaultProject() + " AND text ~ \"%s\" ORDER BY Key ASC"; //%s - servicedesk stamp;
+            = "project=" + Settings.getInstance().getJiraDefaultProject() + " AND text ~ \"%s\" ORDER BY Key ASC"; //%s - servicedesk stamp;
     private static final String JQL_QUERY_TEMPLATE_GET_ISSUE_BY_CUSTOMFIELD
-            = "project=" + settings.getJiraDefaultProject() + " AND "
-            + String.format(JIRA_CUSTOMFIELD_JQL_TEMPLATE, settings.getJiraServiceDeskIDField())
+            = "project=" + Settings.getInstance().getJiraDefaultProject() + " AND "
+            + String.format(JIRA_CUSTOMFIELD_JQL_TEMPLATE, Settings.getInstance().getJiraServiceDeskIDField())
             + " ~ \"%d\" ORDER BY Key ASC"; //%d - servicedesk id;
     final private String basicAuth;
 

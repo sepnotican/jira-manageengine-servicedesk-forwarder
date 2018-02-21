@@ -2,8 +2,8 @@ package core;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import core.threads.IssueTransportThread;
-import dao.IssuesLocalCacheDAO;
+import transport.IssueTransportThread;
+import repository.IssuesLocalCacheRepo;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -20,7 +20,6 @@ public class MainClass {
         if (args.length == 0) {
             System.out.println("Usage :" +
                     "\n\t--createSettings : create settings.json" +
-                    "\n\t--createDB : create SQLite database specified in settings.json (if not exists)" + //todo
                     "\n\t--run : run the application" +
                     "\n\t--clearTaskCache : empty task cache table (use it when db file became big)");
             System.exit(0);
@@ -33,12 +32,8 @@ public class MainClass {
                     System.out.println("Settings created.");
                     System.exit(0);
                 }
-                case "--createDB": {
-                    IssuesLocalCacheDAO.instance.createTaskTransferStructure();
-                    System.exit(0);
-                }
                 case "--clearTaskCache": {
-                    IssuesLocalCacheDAO.instance.clearTaskCache();
+                    IssuesLocalCacheRepo.instance.clearTaskCache();
                     System.exit(0);
                 }
                 case "--run": {
@@ -51,11 +46,10 @@ public class MainClass {
                                 throw new RuntimeException("FATAL ERROR : Unable to create \"log\" directory!");
                             }
 
-                        Settings.getInstance().load();
+                        Settings.load();
 
                         Injector injector = Guice.createInjector(new AppInjector());
 
-//                        Runnable issueTransportThread = new IssueTransportThread();
                         Runnable issueTransportThread = injector.getInstance(IssueTransportThread.class);
 
                         if (Settings.getInstance().isModuleIssueTransortActive()) {

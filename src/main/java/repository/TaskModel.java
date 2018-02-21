@@ -1,4 +1,4 @@
-package entity;
+package repository;
 
 /**
  * Created by muzafar on 2/28/17.

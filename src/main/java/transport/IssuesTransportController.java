@@ -1,14 +1,14 @@
-package controller.issueTransport;
+package transport;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import core.Settings;
-import dao.IssuesLocalCacheDAO;
-import entity.TaskModel;
+import repository.IssuesLocalCacheRepo;
+import repository.TaskModel;
 import org.apache.log4j.Logger;
-import service.IssueNotFoundException;
-import service.JiraHandler;
-import service.ServiceDeskHandler;
+import handlers.jira.IssueNotFoundException;
+import handlers.jira.JiraHandler;
+import handlers.servicedesk.ServiceDeskHandler;
 
 import java.util.List;
 
@@ -25,19 +25,15 @@ public class IssuesTransportController {
     @Inject
     private ServiceDeskHandler serviceDeskHandler;
 
-    private Settings settings;
-
-    public IssuesTransportController() {
-        settings = Settings.getInstance();
-    }
+    public IssuesTransportController() {}
 
     public void checkForChanges() {
 
         //1 check actual tasks from SD
         List<TaskModel> tasksFromSD = serviceDeskHandler.get_requests(0, 1000);
 
-        //2 load cached fields from local DB
-        IssuesLocalCacheDAO.instance.fillTasksCachedInfo(tasksFromSD);
+        //2 load cached jira id from local DB
+        IssuesLocalCacheRepo.instance.fillCachedJiraID(tasksFromSD);
 
         for (TaskModel taskSD : tasksFromSD) {
 
@@ -47,7 +43,7 @@ public class IssuesTransportController {
                 jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_SD_ID_CUSTOMFIELD);
 
                 if (jiraResult == null
-                        && settings.isCheckIssuesInJiraByTextstampBeforeCreate())
+                        && Settings.getInstance().isCheckIssuesInJiraByTextstampBeforeCreate())
                     jiraResult = jiraHandler.getIssueByID(taskSD.getId_sd(), JiraHandler.QueryMode.BY_TEXTSTAMP);
             } catch (IssueNotFoundException e) {
                 logger.error(e.getMessage());
@@ -67,11 +63,11 @@ public class IssuesTransportController {
                     else
                         logger.warn("Creating issue in jira failed: " + taskSD.getId_sd());
                 }
-            } else if (settings.isCloseTaskInSDWhenJiraClosed()
+            } else if (Settings.getInstance().isCloseTaskInSDWhenJiraClosed()
                     && jiraResult != null
                     && (jiraResult.getResolution() != null
                     && taskSD.getResolution() == null
-                    && jiraResult.getJiraStatus() == settings.getJiraStatusIdResolved())) {
+                    && jiraResult.getJiraStatus() == Settings.getInstance().getJiraStatusIdResolved())) {
                 //need check solution and Resolved status
                 taskSD.setResolution(jiraResult.getResolution());
                 //update SD task - set resolution and status = Closed
@@ -81,9 +77,9 @@ public class IssuesTransportController {
                         , jiraResult.getAssingnee()))
                     updateIssueInLocalCache(taskSD);
 
-            } else if (settings.isReopenTaskInJiraWhenSDReopen()
+            } else if (Settings.getInstance().isReopenTaskInJiraWhenSDReopen()
                     && jiraResult != null
-                    && jiraResult.getJiraStatus() == settings.getJiraStatusIdResolved()) {
+                    && jiraResult.getJiraStatus() == Settings.getInstance().getJiraStatusIdResolved()) {
                 //task in active filter SD and closed in Jira = reopen.
                 jiraHandler.reopenTaskByKey(jiraResult.getJiraKey());
                 jiraHandler.addCommentByKey(jiraResult.getJiraKey()
@@ -100,7 +96,7 @@ public class IssuesTransportController {
     }
 
     private void updateIssueInLocalCache(TaskModel taskModel) {
-        IssuesLocalCacheDAO.instance.updateTaskByJiraKey(taskModel);
+        IssuesLocalCacheRepo.instance.updateTaskByJiraKey(taskModel);
     }
 
 }

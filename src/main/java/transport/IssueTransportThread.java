@@ -1,7 +1,6 @@
-package core.threads;
+package transport;
 
 import com.google.inject.Inject;
-import controller.issueTransport.IssuesTransportController;
 import core.Settings;
 import org.apache.log4j.Logger;
 
@@ -25,7 +24,7 @@ public class IssueTransportThread implements Runnable {
         int timeout;
         while (true) {
             try {
-                Settings.getInstance().load();
+                Settings.load();
                 timeout = Math.max(Settings.getInstance().getServicedeskTransportTimeoutSec() * 1000, 30000);
                 Thread.sleep(timeout);
                 issuesTransportController.checkForChanges();

@@ -1,6 +1,6 @@
-package service;
+package handlers.servicedesk;
 
-import entity.TaskModel;
+import repository.TaskModel;
 
 import java.util.ArrayList;
 
